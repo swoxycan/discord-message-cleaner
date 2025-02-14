@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-const delay = 2000; // 1 saniye bekleme süresi
+const delay = 2000;
 const baseURL = 'https://discord.com/api/v9';
 
 let deletedMessagesCount = 0;
@@ -33,7 +33,6 @@ async function getFriends() {
     }
     
     const data = await response.json();
-    // Sadece kabul edilmiş arkadaşlıkları filtrele (type 1 = arkadaş)
     return data.filter(friend => friend.type === 1);
   } catch (error) {
     logMessage(`Arkadaş listesi alınamadı: ${error.message}`);
@@ -41,7 +40,6 @@ async function getFriends() {
   }
 }
 
-// Sunucuları al
 async function getGuilds() {
   const response = await fetch(`${baseURL}/users/@me/guilds`, {
     headers: {
@@ -52,7 +50,6 @@ async function getGuilds() {
   return await response.json();
 }
 
-// Sunucu kanallarını al
 async function getGuildChannels(guildId) {
   const response = await fetch(`${baseURL}/guilds/${guildId}/channels`, {
     headers: {
@@ -128,7 +125,6 @@ async function clearChannelMessages(channelId, userName) {
 
 async function clearMessages() {
   try {
-    // 1. Arkadaş listesindeki DM'leri sil
     const friends = await getFriends();
     
     if (!Array.isArray(friends)) {
@@ -155,7 +151,6 @@ async function clearMessages() {
       }
     }
 
-    // 2. Sunucu mesajlarını sil
     const guilds = await getGuilds();
     logMessage(`${guilds.length} sunucu bulundu.`);
     
@@ -165,7 +160,7 @@ async function clearMessages() {
         logMessage(`${guild.name} sunucusunda mesajlar siliniyor...`);
         
         for (const channel of channels) {
-          if (channel.type === 0) { // Text kanalı
+          if (channel.type === 0) {
             try {
               await clearChannelMessages(channel.id, `${guild.name}/#${channel.name}`);
               logMessage(`${guild.name}/#${channel.name} kanalındaki mesajlar silindi.`);
