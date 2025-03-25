@@ -18,7 +18,6 @@ function logMessage(message) {
   console.log(log.trim());
 }
 
-// Arkadaş listesini al
 async function getFriends() {
   try {
     const response = await fetch(`${baseURL}/users/@me/relationships`, {
@@ -185,6 +184,5 @@ async function clearMessages() {
   }
 }
 
-// Başlat
 logMessage('Program başlatıldı!');
 clearMessages();
